@@ -30,13 +30,13 @@ class Router:
                 route = getattr(self, method)
                 route.update(**url.instance)
 
-    def login(self, method: str, data: dict = None):
+    def login(self, action: str, method: str, data: dict = None):
         errors = []
         if method == 'post':
             user = Manager.get_many(**data)
             if user:
                 self.user = user
-                return True
+                return self.dispatch(action, method, data)
             errors.append('Пользователь не найден')
         return render('managers', 'login.html', {'errors': errors})
 
@@ -44,7 +44,7 @@ class Router:
         if method == 'get':
             self.actions.append((action, method, data))
         if self.user is None and action != 'login':
-            return self.login('get')
+            return self.login(action, method, data)
 
         _method = getattr(self, f'_{method}').get(action)
         if _method:
