@@ -32,7 +32,7 @@ class Router:
 
     def login(self, action: str, method: str, data: dict = None):
         errors = []
-        if method == 'post':
+        if data:
             user = Manager.get_many(**data)
             if user:
                 self.user = user
@@ -43,7 +43,8 @@ class Router:
     def dispatch(self, action: str, method: str, data: dict = None) -> str:
         if method == 'get':
             self.actions.append((action, method, data))
-        if self.user is None and action != 'login':
+
+        if self.user is None:
             return self.login(action, method, data)
 
         _method = getattr(self, f'_{method}').get(action)
