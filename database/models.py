@@ -4,10 +4,14 @@ from sqlalchemy.orm import declarative_base
 from database.crud import CRUD
 
 
-Base = declarative_base()
+BaseModel = declarative_base()
 
 
-class Manager(Base, CRUD):
+class Base(BaseModel, CRUD):
+    pass
+
+
+class Manager(Base):
     __tablename__ = 'managers'
     id = Column(BigInteger, primary_key=True)
     username = Column(String, nullable=False, unique=True)

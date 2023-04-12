@@ -55,3 +55,14 @@ class CRUD:
             session = get_session()
             session.delete(instance)
             session.commit()
+
+    @classmethod
+    def update(cls, **kwargs):
+        instance = cls.get(kwargs.pop('pk'))
+        if instance:
+            session = get_session()
+            instance.__dict__.update(**kwargs)
+            session.add(instance)
+            session.commit()
+            session.refresh(instance)
+            return instance
