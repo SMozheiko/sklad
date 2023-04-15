@@ -1,17 +1,19 @@
-from sqlalchemy import Column, String, Float, BigInteger, Enum, Engine
+import datetime
+
+from sqlalchemy import Column, String, Float, BigInteger, Enum, Engine, DateTime
 from sqlalchemy.orm import declarative_base
 
 from database.crud import CRUD
 
 
-BaseModel = declarative_base()
+Base = declarative_base()
 
 
-class Base(BaseModel, CRUD):
-    pass
+# class Base(BaseModel, CRUD):
+#     pass
 
 
-class Manager(Base):
+class Manager(Base, CRUD):
     __tablename__ = 'managers'
     id = Column(BigInteger, primary_key=True)
     username = Column(String, nullable=False, unique=True)
@@ -19,6 +21,7 @@ class Manager(Base):
     role = Column(String, nullable=False)
     name = Column(String, nullable=False)
     surname = Column(String, nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     @property
     def full_name(self):

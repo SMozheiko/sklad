@@ -9,9 +9,9 @@ from utils import render
 class URLPattern:
 
     def __init__(self, url: str, callback: Callable, methods: List[str]):
-        create_tables(get_engine())
+
         self.instance = {
-            url: callback
+           url: callback
         }
         self.methods = methods
 
@@ -23,6 +23,7 @@ class Router:
         self._post = {}
         self._get = {}
         self.actions = deque(maxlen=2)
+        create_tables(get_engine())
 
     def register(self, urls: List[URLPattern]):
         for url in urls:
@@ -50,6 +51,7 @@ class Router:
         _method = getattr(self, f'_{method}').get(action)
         if _method:
             if method == 'get':
-                return _method(method, data)
+                return _method.get(data)
+            _method.post(data)
             return self.dispatch(*self.actions[0])
         return 'Not found'

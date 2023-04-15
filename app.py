@@ -5,6 +5,7 @@ from routing.urls import router
 
 @eel.expose
 def route(*args, **kwargs):
+    print(args)
     return router.dispatch(*args, **kwargs)
 
 

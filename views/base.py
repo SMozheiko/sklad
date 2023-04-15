@@ -64,3 +64,9 @@ class BaseUpdateView(BaseDetailView):
     def post(self, **kwargs):
         kwargs['pk'] = kwargs.pop(self.pk_key)
         return self.model.update(**kwargs)
+
+
+class BaseCreateView(BaseModelView):
+
+    def post(self, **kwargs):
+        return self.model.create(**kwargs)
