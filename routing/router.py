@@ -28,7 +28,7 @@ class Router:
     def register(self, urls: List[URLPattern]):
         for url in urls:
             for method in url.methods:
-                route = getattr(self, method)
+                route = getattr(self, f"_{method}")
                 route.update(**url.instance)
 
     def login(self, action: str, method: str, data: dict = None):
@@ -37,13 +37,16 @@ class Router:
             user = Manager.get_many(**data)
             if user:
                 self.user = user
-                return self.dispatch(action, method, data)
+                return user
             errors.append('Пользователь не найден')
+            eel.renderErrors(errors)
+            return
         return render('managers', 'login.html', {'errors': errors})
 
     def dispatch(self, action: str, method: str, data: dict = None) -> str:
         if method == 'get':
             self.actions.append((action, method, data))
+        print(self.actions)
 
         if self.user is None:
             return self.login(action, method, data)
@@ -52,6 +55,9 @@ class Router:
         if _method:
             if method == 'get':
                 return _method.get(data)
-            _method.post(data)
-            return self.dispatch(*self.actions[0])
-        return 'Not found'
+            result = _method.post(data)
+            if result:
+                return self.dispatch(*self.actions[0])
+            return
+        else:
+            return 'Not found'
