@@ -3,15 +3,16 @@ from typing import List, Callable
 
 from database.core import get_engine
 from database.models import Manager, create_tables
+from schema.http import Request, Response
 from utils import render
 
 
 class URLPattern:
 
-    def __init__(self, url: str, callback: Callable, methods: List[str]):
+    def __init__(self, url: str, callback: Callable, methods: List[str], tag: str):
 
         self.instance = {
-           url: callback
+           url: (callback, tag)
         }
         self.methods = methods
 
@@ -31,33 +32,35 @@ class Router:
                 route = getattr(self, f"_{method}")
                 route.update(**url.instance)
 
-    def login(self, action: str, method: str, data: dict = None):
+    def login(self, request: Request):
         errors = []
-        if data:
+        if request.data:
             user = Manager.get_many(**data)
             if user:
                 self.user = user
-                return user
+                return self.dispatch(*self.actions[0])
             errors.append('Пользователь не найден')
-            eel.renderErrors(errors)
-            return
-        return render('managers', 'login.html', {'errors': errors})
+            
+        return Response(tag='frame', html=render('managers', 'login.html', {'errors': errors}), errors=errors)
 
-    def dispatch(self, action: str, method: str, data: dict = None) -> str:
+    def dispatch(self, action: str, method: str, params: dict = None, data: dict = None) -> Response:
         if method == 'get':
-            self.actions.append((action, method, data))
-        print(self.actions)
+            self.actions.append((action, method, params, data))
+        
+        request = Request.parse_obj({'method': method, 'action': action, 'params': params, 'data': data})
 
+        response = None
         if self.user is None:
-            return self.login(action, method, data)
-
-        _method = getattr(self, f'_{method}').get(action)
+            return self.login(request)
+        
+        _method, tag = getattr(self, f'_{method}').get(action)
         if _method:
             if method == 'get':
-                return _method.get(data)
-            result = _method.post(data)
-            if result:
+                return Response(tag=tag, html=_method.get(request))
+                
+            result = _method.post(request)
+            if not result:
                 return self.dispatch(*self.actions[0])
-            return
-        else:
-            return 'Not found'
+            
+            return Response(tag=tag, html=result)
+        return Response(tag='body', html='Not Found')

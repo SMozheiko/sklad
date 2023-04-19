@@ -3,7 +3,7 @@ from views.views import ManagersListView
 
 
 urlpatterns = [
-    URLPattern('managers_list', ManagersListView(), methods=['get'])
+    URLPattern('managers_list', ManagersListView(), methods=['get'], tag='body')
 ]
 
 router = Router()

@@ -1,12 +1,14 @@
 import eel
 
 from routing.urls import router
+from schema.http import Response
 
 
 @eel.expose
 def route(*args, **kwargs):
     print(args)
-    return router.dispatch(*args, **kwargs)
+    response = router.dispatch(*args, **kwargs)
+    eel.renderResponse(response.dict())
 
 
 if __name__ == '__main__':
