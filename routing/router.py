@@ -35,7 +35,7 @@ class Router:
     def login(self, request: Request):
         errors = []
         if request.data:
-            user = Manager.get_many(**data)
+            user = Manager.get_many(**request.data)
             if user:
                 self.user = user
                 return self.dispatch(*self.actions[0])

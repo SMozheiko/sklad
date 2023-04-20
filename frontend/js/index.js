@@ -1,7 +1,11 @@
 'use strict';
 
 function render(response) {
-    const body = document.querySelector('#body');
+    const frame = document.querySelector('.frame');
+    if (frame.classList.contains('visible-frame')) {
+        frame.classList.remove('visible-frame')
+    };
+    const body = document.querySelector(`#${response.tag}`);
     body.innerHTML = response.html;
 }
 
