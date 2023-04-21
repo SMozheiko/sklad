@@ -49,7 +49,6 @@ class Router:
         
         request = Request.parse_obj({'method': method, 'action': action, 'params': params, 'data': data})
 
-        response = None
         if self.user is None:
             return self.login(request)
         

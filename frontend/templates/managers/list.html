@@ -1,18 +1,23 @@
-<table>
-    <tr>
-        <th>id</th>
-        <th>username</th>
-        <th>role</th>
-        <th>name</th>
-        <th>date register</th>
-    </tr>
-    {% for object in objects %}
-    <tr>
-        <td>{{ object.id }}</td>
-        <td>{{ object.username }}</td>
-        <td>{{ object.role }}</td>
-        <td>{{ object.full_name }}</td>
-        <td>{{ object.created_at }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="content">
+    <div class="buttons">
+        <button class="operational-button" data-action="create_manager">Добавить менеджера +</button>
+    </div>
+    <table>
+        <tr>
+            <th>id</th>
+            <th>username</th>
+            <th>role</th>
+            <th>name</th>
+            <th>date register</th>
+        </tr>
+        {% for object in objects %}
+        <tr>
+            <td>{{ object.id }}</td>
+            <td>{{ object.username }}</td>
+            <td>{{ object.role }}</td>
+            <td>{{ object.full_name }}</td>
+            <td>{{ object.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

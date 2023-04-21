@@ -31,6 +31,8 @@ async function formControlListner(event) {
             const frame = document.querySelector('.frame');
             frame.innerHTML = '';
             frame.classList.remove('visible-frame');
+        } else if (event.target.dataset.action === 'cancel') {
+            window.close();
         } else {
             const data = {};
             const form = event.target.parentElement.previousElementSibling;
