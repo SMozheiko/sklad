@@ -39,6 +39,9 @@ async function formControlListner(event) {
             for (let child of form.children) {
                 if (child.tagName === 'INPUT') {
                     data[child.name] = child.value;
+                } else if (child.tagName === 'SELECT') {
+                    let value = child.options[child.selectedIndex];
+                    data[child.name] = value.value;
                 }
             }
             await eel.route(event.target.dataset.action, 'post', {}, data)();
@@ -46,8 +49,17 @@ async function formControlListner(event) {
     }
 }
 
+async function PageClickListener(event) {
+    event.preventDefault();
+    if (event.target.classList.contains('operational-button')) {
+        await eel.route(event.target.dataset.action, 'get', {}, {})
+    }
+}
+
 window.addEventListener('load', async () => {
     const frame = document.querySelector('.frame');
     frame.addEventListener('click', async (event) => formControlListner(event));
+    const body = document.querySelector('#body');
+    body.addEventListener('click', async (event) => PageClickListener(event));
     await eel.route('managers_list', 'get', {}, {});
 })

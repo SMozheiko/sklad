@@ -1,12 +1,15 @@
 <div class="content">
   <form action="#" method="post">
+    {% for error in errors %}
+      <p class"error">{{ error }}</p>
+    {% endfor %}
     <label for="username">Имя пользователя: </label>
     <input type="text" name="username" id="username" required>
     <label for="password">Пароль: </label>
     <input type="password" name="password" id="password" required>
     <label for="name">Имя: </label>
     <input type="text" name="name" id="name" required>
-    <label for="surname">Пароль: </label>
+    <label for="surname">Фамилия: </label>
     <input type="text" name="surname" id="surname" required>
     <select name="role" id="role">
         <option value="admin">Администратор</option>
