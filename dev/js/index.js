@@ -36,13 +36,14 @@ async function formControlListner(event) {
         } else {
             const data = {};
             const form = event.target.parentElement.previousElementSibling;
-            form.querySelectorAll('INPUT').forEach(child => {
-                data[child.name] = child.value;
-            });
-            form.querySelectorAll('SELECT').forEach(child => {
-                let value = child.options[child.selectedIndex];
-                data[child.name] = value.value;
-            });
+            for (let child of form.children) {
+                if (child.tagName === 'INPUT') {
+                    data[child.name] = child.value;
+                } else if (child.tagName === 'SELECT') {
+                    let value = child.options[child.selectedIndex];
+                    data[child.name] = value.value;
+                }
+            }
             await eel.route(event.target.dataset.action, 'post', {}, data)();
         }
     }

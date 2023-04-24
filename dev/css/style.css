@@ -1,0 +1,73 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	position: relative;
+}
+
+.frame {
+	position: absolute;
+	display: none;
+	width: 100%;
+	height: 100vh;
+	justify-content: center;
+	align-items: center;
+}
+
+.visible-frame {
+	display: flex;
+}
+.visible-frame .form-content {
+	border-radius: 10px;
+	padding: 10px;
+	min-width: 30%;
+	box-shadow: 0 0 20px 10px gray;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: space-between;
+	font-size: 20px;
+	margin: 20px;
+}
+form label {
+	display: flex;
+	justify-content: space-between;
+	margin: 10px 10px;
+}
+
+form input {
+	flex-grow: 3;
+}
+form span {
+	min-width: 40%;
+}
+#form-title {
+	display: flex;
+	align-self: center;
+}
+.controls {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+button {
+	border-radius: 3px;
+	font-size: 16px;
+	padding: 8px 20px;
+	cursor: pointer;
+	color: #FFF;
+}
+.control-button {
+	margin: 0 10px;
+}
+.ok-button {
+	background-color: #019245;
+}
+.cancel-button {
+	background-color: #731982;	
+}
+
