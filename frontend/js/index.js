@@ -31,7 +31,7 @@ async function formControlListner(event) {
             const frame = document.querySelector('.frame');
             frame.innerHTML = '';
             frame.classList.remove('visible-frame');
-        } else if (event.target.dataset.action === 'cancel') {
+        } else if (event.target.dataset.action === 'exit') {
             window.close();
         } else {
             const data = {};
@@ -51,7 +51,13 @@ async function formControlListner(event) {
 async function PageClickListener(event) {
     event.preventDefault();
     if (event.target.classList.contains('operational-button')) {
-        await eel.route(event.target.dataset.action, 'get', {}, {})
+        const params = {}
+        event.target.dataset.forEach(key => {
+            if (key !== 'action') {
+                params[key] = event.target.dataset[key];
+            }
+        });
+        await eel.route(event.target.dataset.action, 'get', params, {})
     }
 }
 

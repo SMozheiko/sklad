@@ -17,6 +17,8 @@
             <td>{{ object.role }}</td>
             <td>{{ object.full_name }}</td>
             <td>{{ object.created_at }}</td>
+            <td><button class="operational-button" data-pk="{{ object.id }}">Изменить</button></td>
+            <td><button class="operational-button" data-pk="{{ object.id }}">Удалить</button></td>
         </tr>
         {% endfor %}
     </table>

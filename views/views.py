@@ -1,6 +1,6 @@
 from database.models import Manager
 from schema.http import Request
-from views.base import BaseListView, BaseCreateView
+from views.base import BaseListView, BaseCreateView, BaseUpdateView
 from utils import render
 
 
