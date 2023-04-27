@@ -1,10 +1,10 @@
 from collections import deque
 from typing import List, Callable
 
-from database.core import get_engine
+from database.core import engines
 from database.models import Manager, create_tables
 from schema.http import Request, Response
-from utils import render
+from utils import render, get_hashed_password
 
 
 class URLPattern:
@@ -24,7 +24,7 @@ class Router:
         self._post = {}
         self._get = {}
         self.actions = deque(maxlen=2)
-        create_tables(get_engine())
+        create_tables(next(engines))
 
     def register(self, urls: List[URLPattern]):
         for url in urls:
@@ -35,11 +35,15 @@ class Router:
     def login(self, request: Request):
         errors = []
         if request.data:
-            user = Manager.get_many(**request.data)
+            user = Manager.get_many(username=request.data.get('username'))
             if user:
-                self.user = user
-                return self.dispatch(*self.actions[0])
-            errors.append('Пользователь не найден')
+                user = user[0]
+                if user.password == get_hashed_password(request.data.get('password')):
+                    self.user = user
+                    return self.dispatch(*self.actions[0])
+                errors.append('Не правильный пароль')
+            else:
+                errors.append('Пользователь не найден')
             
         return Response(tag='frame', html=render('managers', 'login.html', {'errors': errors}), errors=errors)
 

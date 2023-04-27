@@ -1,6 +1,8 @@
 from typing import Iterable
 
-from database.core import get_session
+from sqlalchemy import update, delete
+
+from database.core import session as sess
 
 
 class CRUD:
@@ -21,7 +23,7 @@ class CRUD:
 
     @classmethod
     def get_count(cls) -> int:
-        session = get_session()
+        session = next(sess)
         return session.query(cls).count()
 
     @classmethod
@@ -30,17 +32,17 @@ class CRUD:
 
     @classmethod
     def get(cls, pk: int):
-        session = get_session()
+        session = next(sess)
         return session.query(cls).filter_by(id=pk).first()
 
     @classmethod
     def get_many(cls, **kwargs):
-        session = get_session()
+        session = next(sess)
         return session.query(cls).filter_by(**kwargs).all()
 
     @classmethod
     def create(cls, **kwargs):
-        session = get_session()
+        session = next(sess)
         pk = cls.get_autoincrement()
         instance = cls(id=pk, **kwargs)
         session.add(instance)
@@ -49,20 +51,15 @@ class CRUD:
         return instance
 
     @classmethod
-    def delete(cls, pk: int):
-        instance = cls.get(pk)
-        if instance:
-            session = get_session()
-            session.delete(instance)
-            session.commit()
+    def delete(cls, params: dict):
+        session = next(sess)
+        query = delete(cls).filter_by(**params)
+        session.execute(query)
+        session.commit()
 
     @classmethod
-    def update(cls, **kwargs):
-        instance = cls.get(kwargs.pop('pk'))
-        if instance:
-            session = get_session()
-            instance.__dict__.update(**kwargs)
-            session.add(instance)
-            session.commit()
-            session.refresh(instance)
-            return instance
+    def update(cls, params: dict, **kwargs):
+        session = next(sess)
+        query = update(cls).filter_by(**params).values(**kwargs)
+        session.execute(query)
+        session.commit()

@@ -49,24 +49,21 @@ class BaseListView(BaseModelView):
 class BaseDetailView(BaseModelView):
 
     queryset = None
-    pk_key = 'pk'
 
     def get_queryset(self, request: Request):
-        return self.queryset or self.model.get(request.params.get(self.pk_key))
+        return self.queryset or self.model.get(request.params.get('id'))
 
 
 class BaseDeleteView(BaseDetailView):
 
     def post(self, request: Request):
-        self.model.delete(request.data.get(self.pk_key))
+        self.model.delete(request.params)
 
 
 class BaseUpdateView(BaseDetailView):
 
     def post(self, request: Request):
-        kwargs = request.data.copy()
-        kwargs['pk'] = request.data.pop(self.pk_key)
-        return self.model.update(**kwargs)
+        return self.model.update(request.params, **request.data)
 
 
 class BaseCreateView(BaseModelView):

@@ -4,13 +4,10 @@ from sqlalchemy import Column, String, Float, BigInteger, Enum, Engine, DateTime
 from sqlalchemy.orm import declarative_base
 
 from database.crud import CRUD
+from utils import get_hashed_password
 
 
 Base = declarative_base()
-
-
-# class Base(BaseModel, CRUD):
-#     pass
 
 
 class Manager(Base, CRUD):
@@ -21,12 +18,20 @@ class Manager(Base, CRUD):
     role = Column(String, nullable=False)
     name = Column(String, nullable=False)
     surname = Column(String, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    _created_at = Column(DateTime, name='created_at', nullable=False, default=datetime.datetime.now())
 
     @property
     def full_name(self):
-        return f"{self.surname} {self.name}".capitalize()
+        return f"{self.surname} {self.name}".title()
 
+    @property
+    def created_at(self) -> str:
+        return self._created_at.strftime('%Y-%m-%d %H:%M')
+
+    @classmethod
+    def create(cls, **kwargs):
+        kwargs['password'] = get_hashed_password(kwargs['password'])
+        super().create(**kwargs)
 
 def create_tables(engine: Engine):
     Base.metadata.create_all(bind=engine, checkfirst=True)

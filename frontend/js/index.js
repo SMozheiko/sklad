@@ -34,6 +34,12 @@ async function formControlListner(event) {
         } else if (event.target.dataset.action === 'exit') {
             window.close();
         } else {
+            const params = {}
+            for (let key in event.target.dataset) {
+                if (key !== 'action') {
+                    params[key] = event.target.dataset[key];
+                }
+            }
             const data = {};
             const form = event.target.parentElement.previousElementSibling;
             form.querySelectorAll('INPUT').forEach(child => {
@@ -43,7 +49,7 @@ async function formControlListner(event) {
                 let value = child.options[child.selectedIndex];
                 data[child.name] = value.value;
             });
-            await eel.route(event.target.dataset.action, 'post', {}, data)();
+            await eel.route(event.target.dataset.action, 'post', params, data)();
         }
     }
 }
@@ -52,11 +58,11 @@ async function PageClickListener(event) {
     event.preventDefault();
     if (event.target.classList.contains('operational-button')) {
         const params = {}
-        event.target.dataset.forEach(key => {
+        for (let key in event.target.dataset) {
             if (key !== 'action') {
                 params[key] = event.target.dataset[key];
             }
-        });
+        }
         await eel.route(event.target.dataset.action, 'get', params, {})
     }
 }
