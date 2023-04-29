@@ -1,7 +1,7 @@
 from database.models import Manager
 from schema.http import Request
 from views.base import BaseListView, BaseCreateView, BaseUpdateView, BaseDeleteView
-from utils import render
+from utils import render, get_hashed_password
 
 
 class ManagersListView(BaseListView):
@@ -39,6 +39,25 @@ class ManagerUpdateView(BaseUpdateView):
             context = self.get_context(request)
             context.update({'errors': [str(e)]})
             return render(self.template_path, self.template, context)
+
+
+class ManagerPasswordResetView(BaseUpdateView):
+    model = Manager
+    template = 'password_reset.html'
+    template_path = 'managers'
+
+    def get_queryset(self, request: Request):
+        return self.model.get_many(username=request.data.get('username'))
+    
+    def post(self, request: Request):
+        if request.data.get('password') != request.data.get('password2'):
+            context = self.get_context(request)
+            context.update({'errors': ['Пароль и подтверждение не совпадают']})
+            return render(self.template_path, self.template, context)
+
+        password = get_hashed_password(request.data.get('password'))
+        self.model.update({'username': request.data.pop('username')}, password=password)
+
 
 
 class ManagerDeleteView(BaseDeleteView):

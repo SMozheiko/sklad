@@ -15,12 +15,21 @@ function renderForm(response) {
     frame.classList.add('visible-frame');
 }
 
+function renderHeader(response) {
+    const header = document.querySelector('#header');
+    header.innerHTML = response.header;
+}
+
+
 eel.expose(renderResponse);
 function renderResponse(response) {
     if (response.tag === 'frame') {
         renderForm(response)
     } else {
         render(response)
+    };
+    if (response.header !== null) {
+        renderHeader(response)
     }
 }
 
@@ -33,6 +42,14 @@ async function formControlListner(event) {
             frame.classList.remove('visible-frame');
         } else if (event.target.dataset.action === 'exit') {
             window.close();
+        } else if (event.target.classList.contains('operational-button')) {
+            const params = {}
+            for (let key in event.target.dataset) {
+                if (key !== 'action') {
+                    params[key] = event.target.dataset[key];
+                }
+            };
+            await eel.route(event.target.dataset.action, 'get', params, {});
         } else {
             const params = {}
             for (let key in event.target.dataset) {

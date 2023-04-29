@@ -1,6 +1,8 @@
 <div class="content">
     <div class="buttons">
-        <button class="operational-button" data-action="create_manager">Добавить менеджера +</button>
+        <button class="operational-button" data-action="create_manager" {% if user.role != 'admin' %} disabled {% endif %}>
+            Добавить менеджера +
+        </button>
     </div>
     <table>
         <tr>
@@ -18,13 +20,13 @@
             <td>{{ object.full_name }}</td>
             <td>{{ object.created_at }}</td>
             <td>
-                <button class="operational-button" data-action="update_manager" data-id="{{ object.id }}">
-                    <img src="./css/edit-2-svgrepo-com.svg" width="20" height="20">
+                <button class="operational-button" data-action="update_manager" data-id="{{ object.id }}" {% if user.role != 'admin' and user.id !=object.id %} disabled {% endif %}>
+                    Изменить
                 </button>
             </td>
             <td>
-                <button class="operational-button" data-action="delete_manager" data-id="{{ object.id }}">
-                    <img src="./css/delete-recycle-bin-trash-can-svgrepo-com.svg"  width="20" height="20">
+                <button class="operational-button" data-action="delete_manager" data-id="{{ object.id }}" {% if user.role != 'admin' and user.id !=object.id %} disabled {% endif %}>
+                    Удалить
                 </button>
             </td>
         </tr>

@@ -2,7 +2,6 @@ from typing import Type
 
 from database.models import Base
 from schema.http import Request
-from settings import settings
 from utils import render
 
 
@@ -13,7 +12,9 @@ class BaseView:
     base_context = {}
 
     def get_context(self, request: Request):
-        return self.base_context
+        context = self.base_context.copy()
+        context.update({'user': request.user})
+        return context
 
     def get(self, request: Request):
         context = self.get_context(request)
@@ -33,8 +34,9 @@ class BaseModelView(BaseView):
 
     def get_context(self, request: Request):
         instance = self.get_queryset(request)
-        self.base_context.update({self.context_variable: instance})
-        return self.base_context
+        context = super().get_context(request)
+        context.update({self.context_variable: instance})
+        return context
 
 
 class BaseListView(BaseModelView):

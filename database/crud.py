@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from sqlalchemy import update, delete
+from sqlalchemy import update, delete, func
 
 from database.core import session as sess
 
@@ -28,7 +28,9 @@ class CRUD:
 
     @classmethod
     def get_autoincrement(cls) -> int:
-        return cls.get_count() + 1
+        session = next(sess)
+        pk = session.query(func.max(cls.id)).scalar()
+        return pk + 1 if pk else 1
 
     @classmethod
     def get(cls, pk: int):
