@@ -1,0 +1,30 @@
+<div class="form-content">
+  <h2 id="form-title">Добавить продукт</h2>
+  <form action="#" method="post">
+    {% for error in errors %}
+      <p class="error"> {{ error }}</p>
+    {% endfor %}
+    <label for="title">Название: </label>
+    <input type="text" name="title" id="title" required>
+    <label for="quantity">Количество на складе: </label>
+    <input type="number" name="quantity" id="quantity" required>
+    <label for="price">Цена: </label>
+    <input type="number" name="price" id="price" required>
+    <label for="units">Единицы измерения: </label>
+    <input type="text" name="units" id="units" required>
+    <select name="manufacturer" id="manufacturer" onclick="productManufacturerCreateListener(this)">
+        {% for manufacturer in manufacturers %}
+          <option value="{{ manufacturer.id }}">
+            {{ manufacturer.title }}
+          </option>
+        {% endfor %}
+          <option value="add new">
+            Добавить
+          </option>
+    </select>
+  </form>
+  <div class="controls">
+    <button class="control-button ok-button" data-action="create_product">Ok</button>
+    <button class="control-button cancel-button" data-action="cancel">Отмена</button>
+  </div>
+</div>

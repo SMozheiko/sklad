@@ -15,6 +15,31 @@ function renderForm(response) {
     frame.classList.add('visible-frame');
 }
 
+function productManufacturerCreateListener(elem) {
+    if (elem.options[elem.selectedIndex].value === 'add new') {
+        const newManufacturerForm = document.createElement('DIV');
+        const ok = document.createElement('BUTTON');
+        ok.innerText = 'OK';
+        ok.addEventListener('click', event => {
+          const newOpt = document.createElement('OPTION');
+          newOpt.value = event.target.previousElementSibling.value;
+          newOpt.innerText = event.target.previousElementSibling.value;
+          elem.append(newOpt);
+          newManufacturerForm.remove();
+        });
+        const cancel = document.createElement('BUTTON');
+        cancel.innerText = 'Отмена';
+        cancel.classList.add('cancel-button');
+        cancel.addEventListener('click', event => {
+          newManufacturerForm.remove();
+        });
+        const newMan = document.createElement('INPUT');
+        newMan.name = elem.name;
+        newManufacturerForm.append(...[newMan, ok, cancel]);
+        elem.before(newManufacturerForm);
+    }
+}
+
 function renderHeader(response) {
     const header = document.querySelector('#header');
     header.innerHTML = response.header;

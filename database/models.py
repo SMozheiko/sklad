@@ -1,7 +1,7 @@
 import datetime
 
-from sqlalchemy import Column, String, Float, BigInteger, Enum, Engine, DateTime
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, String, Float, BigInteger, Enum, Engine, DateTime, Table, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship
 
 from database.crud import CRUD
 from utils import get_hashed_password
@@ -32,6 +32,57 @@ class Manager(Base, CRUD):
     def create(cls, **kwargs):
         kwargs['password'] = get_hashed_password(kwargs['password'])
         super().create(**kwargs)
+
+
+association_table = Table(
+    "products_categories",
+    Base.metadata,
+    Column("product_id", ForeignKey("products.id"), primary_key=True),
+    Column("category_id", ForeignKey("categories.id"), primary_key=True),
+)
+
+
+class Category(Base, CRUD):
+    __tablename__ = 'categories'
+    id = Column(BigInteger, primary_key=True)
+    title = Column(String, nullable=False, unique=True)
+    products = relationship(
+        'Product',
+        secondary=association_table, back_populates="categories"
+    )
+
+
+class Manufacturer(Base, CRUD):
+    __tablename__ = 'manufacturers'
+    id = Column(BigInteger, primary_key=True)
+    title = Column(String, nullable=False, unique=True)
+
+    products = relationship(
+        'Product',
+        back_populates='manufacturer',
+        uselist=True
+    )
+
+
+class Product(Base, CRUD):
+    __tablename__ = 'products'
+    id = Column(BigInteger, primary_key=True)
+    title = Column(String, nullable=False, unique=True)
+    manufacturer_id = Column(ForeignKey('manufacturers.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    quantity = Column(Float, nullable=False, default=0.0)
+    price = Column(Float, nullable=False, default=0.0)
+    units = Column(String, nullable=False)
+
+    categories = relationship(
+        Category,
+        secondary=association_table, back_populates="products"
+    )
+    manufacturer = relationship(
+        Manufacturer,
+        back_populates='products',
+        uselist=False
+    )
+
 
 def create_tables(engine: Engine):
     Base.metadata.create_all(bind=engine, checkfirst=True)

@@ -1,0 +1,37 @@
+<div class="content">
+    <div class="buttons">
+        <button class="operational-button" data-action="create_product">
+            Добавить продукт +
+        </button>
+    </div>
+    <table>
+        <tr>
+            <th>id</th>
+            <th>title</th>
+            <th>manufacturer</th>
+            <th>quantity</th>
+            <th>units</th>
+            <th>price</th>
+        </tr>
+        {% for object in objects %}
+        <tr>
+            <td>{{ object.id }}</td>
+            <td>{{ object.title }}</td>
+            <td>{{ object.manufacturer.title }}</td>
+            <td>{{ object.quantity }}</td>
+            <td>{{ object.units }}</td>
+            <td>{{ object.price }}</td>
+            <td>
+                <button class="operational-button" data-action="update_product" data-id="{{ object.id }}" {% if user.role != 'admin' and user.id !=object.id %} disabled {% endif %}>
+                    Изменить
+                </button>
+            </td>
+            <td>
+                <button class="operational-button" data-action="delete_product" data-id="{{ object.id }}" {% if user.role != 'admin' and user.id !=object.id %} disabled {% endif %}>
+                    Удалить
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
