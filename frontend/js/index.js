@@ -35,21 +35,13 @@ function renderResponse(response) {
 
 async function formControlListner(event) {
     event.preventDefault();
-    if (event.target.tagName === 'BUTTON') {
+    if (event.target.classList.contains('control-button')) {
         if (event.target.dataset.action === 'cancel') {
             const frame = document.querySelector('.frame');
             frame.innerHTML = '';
             frame.classList.remove('visible-frame');
         } else if (event.target.dataset.action === 'exit') {
             window.close();
-        } else if (event.target.classList.contains('operational-button')) {
-            const params = {}
-            for (let key in event.target.dataset) {
-                if (key !== 'action') {
-                    params[key] = event.target.dataset[key];
-                }
-            };
-            await eel.route(event.target.dataset.action, 'get', params, {});
         } else {
             const params = {}
             for (let key in event.target.dataset) {
@@ -87,7 +79,7 @@ async function PageClickListener(event) {
 window.addEventListener('load', async () => {
     const frame = document.querySelector('.frame');
     frame.addEventListener('click', async (event) => formControlListner(event));
-    const body = document.querySelector('#body');
+    const body = document.querySelector('body');
     body.addEventListener('click', async (event) => PageClickListener(event));
     await eel.route('managers_list', 'get', {}, {});
 })

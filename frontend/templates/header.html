@@ -1,7 +1,11 @@
 <div class="header-container">
     <ul class="menu">
         {% for link in links %}
-            <li class="menu-item {% if action == link.action %}active-link{% endif %}" data-action="{{ link.action }}">{{ link.title }}</li>
+            <li class="menu-item">
+                <button data-action="{{ link.action }}" class="operational-button {% if action == link.action %}active-link{% endif %}">
+                    {{ link.title }}
+                </button>
+            </li>
         {% endfor %}
     </ul>
     <div id="user">
