@@ -1,9 +1,11 @@
 import datetime
 
-from sqlalchemy import Column, String, Float, BigInteger, Enum, Engine, DateTime, Table, ForeignKey
+from sqlalchemy import Column, String, Float, BigInteger, Enum, Engine, DateTime, Table, \
+    ForeignKey, Boolean, PrimaryKeyConstraint
 from sqlalchemy.orm import declarative_base, relationship
 
 from database.crud import CRUD
+from database.core import session as sess
 from utils import get_hashed_password
 
 
@@ -18,7 +20,9 @@ class Manager(Base, CRUD):
     role = Column(String, nullable=False)
     name = Column(String, nullable=False)
     surname = Column(String, nullable=False)
-    _created_at = Column(DateTime, name='created_at', nullable=False, default=datetime.datetime.now())
+    email = Column(String, nullable=False)
+    one_time_pass = Column(Boolean, nullable=False, default=True)
+    _created_at = Column(DateTime, name='created_at', nullable=False, default=datetime.datetime.now)
 
     @property
     def full_name(self):
@@ -37,8 +41,9 @@ class Manager(Base, CRUD):
 association_table = Table(
     "products_categories",
     Base.metadata,
-    Column("product_id", ForeignKey("products.id"), primary_key=True),
-    Column("category_id", ForeignKey("categories.id"), primary_key=True),
+    Column("product_id", ForeignKey("products.id")),
+    Column("category_id", ForeignKey("categories.id")),
+    PrimaryKeyConstraint('product_id', 'category_id', name='composite_pk')
 )
 
 
@@ -83,9 +88,33 @@ class Product(Base, CRUD):
         uselist=False
     )
 
+    @classmethod
+    def create(cls, **kwargs):
+        mf_title = kwargs.pop('manufacturer')
+        manufacturer = Manufacturer.get_many(title=mf_title)
+        if not manufacturer:
+            manufacturer = Manufacturer.create(title=mf_title)
+        else:
+            manufacturer = manufacturer[0]
+        category_names = kwargs.pop('categories')
+        categories = []
+        for title in category_names:
+            cat = Category.get_many(title=title)
+            if cat:
+                categories.extend(cat)
+            else:
+                categories.append(Category.create(title=title))
+
+        pk = cls.get_autoincrement()
+        instance = cls(id=pk, manufacturer=manufacturer, categories=categories, **kwargs)
+        session = sess.sess
+        session.add(instance)
+        session.commit()
+
 
 def create_tables(engine: Engine):
     Base.metadata.create_all(bind=engine, checkfirst=True)
+    sess.init()
     count = Manager.get_count()
     if not count:
         Manager.create(
@@ -94,6 +123,7 @@ def create_tables(engine: Engine):
                 'password': 'admin',
                 'role': 'admin',
                 'name': 'admin',
-                'surname': 'god'
+                'surname': 'god',
+                'email': 'email@email.ru'
             }
         )

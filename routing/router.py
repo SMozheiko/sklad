@@ -1,7 +1,7 @@
 from collections import deque
 from typing import List, Type
 
-from database.core import engines
+from database.core import get_engine, session
 from database.models import Manager, create_tables
 from schema.http import Request, Response
 from views.base import BaseView
@@ -30,7 +30,10 @@ class Router:
         self._post = {}
         self._get = {}
         self.actions = deque(maxlen=2)
-        create_tables(next(engines))
+        engine = get_engine()
+        create_tables(engine)
+        engine.dispose()
+        session.init()
 
     def register(self, urls: List[URLPattern]):
         for url in urls:
@@ -51,10 +54,15 @@ class Router:
             user = Manager.get_many(username=request.data.get('username'))
             if user:
                 user = user[0]
-                if user.password == get_hashed_password(request.data.get('password')):
+                if user.one_time_pass:
+                    errors.append('Вы используете одноразовый пароль.')
+                    errors.append('Пожалуйста, смените через форму сброса пароля')
+
+                elif user.password == get_hashed_password(request.data.get('password')):
                     self.user = user
                     return self.dispatch(*self.actions[0])
-                errors.append('Не правильный пароль')
+                else:
+                    errors.append('Не правильный пароль')
             else:
                 errors.append('Пользователь не найден')
             
@@ -75,10 +83,15 @@ class Router:
         request = Request.parse_obj(
             {'method': method, 'action': action, 'params': params, 'data': data, 'user': self.user}
         )
-        if self.user is None and action != 'password_reset':
+
+        if request.action == 'login':
             return self.login(request)
-        
+
         _method, tag = getattr(self, f'_{method}').get(action)
+
+        if _method.login_required and self.user is None:
+            return self.login(request)
+
         if _method:
             if method == 'get':
                 return Response(tag=tag, html=_method.get(request), header=self.get_header_html(request.action))

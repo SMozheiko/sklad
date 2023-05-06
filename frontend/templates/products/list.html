@@ -4,30 +4,90 @@
             Добавить продукт +
         </button>
     </div>
+    <br>
+    <hr>
+    <br>
+    <div class="aggregate-container">
+        <div class="filter aggregate">
+            <label for="category"><span>Категории:</span></label>
+            <select name="category" id="category" multiple size="3">
+                <option value="all" selected onselect="(el) => {
+                    for (let i in el.parentElement.options) {
+                        if (i > 0) {
+                            el.parentElement.options[i].setattr('selected' = true)
+                        }
+                    }
+                }">Выбрать все</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" onclick="(el) => {
+                        el.parentElement.options[0].setattr('selected' = '')
+                    }">{{ category.title }}</option>
+                {% endfor %}
+            </select>
+            <label for="manufacturer"><span>Производители:</span></label>
+            <select name="manufacturer" id="manufacturer" multiple size="3">
+                <option value="all" selected onselect="(el) => {
+                    for (let i in el.parentElement.options) {
+                        if (i > 0) {
+                            el.parentElement.options[i].setattr('selected' = true)
+                        }
+                    }
+                }">Выбрать все</option>
+                {% for manufacturer in manufacturers %}
+                    <option value="{{ manufacturer.id }}" onclick="(el) => {
+                        el.parentElement.options[0].setattr('selected' = '')
+                    }">{{ manufacturer.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="sorting aggregate">
+            <label for="sort"><span>Сортировать:</span></label>
+            <select name="sort" id="sort">
+                <option value="title" selected>Название</option>
+                <option value="manufacturer">Производитель</option>
+            </select>
+            <select name="order" id="order">
+                <option value="0" selected>По возрастанию</option>
+                <option value="1">По убыванию</option>
+            </select>
+        </div>
+        <div class="aggregate">
+            <button class="search-button" onclick="filterProducts(this)" data-action="products_list">Применить</button>
+        </div>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="search">
+        <label for="search"><span>Поиск: </span></label>
+        <input type="text" name="search" id="search" data-action="products_list">
+        <button class="search-button" onclick="searchProducts(this.previousElementSibling)">Найти</button>
+    </div>
+    <br>
+    <hr>
+    <br>
     <table>
         <tr>
-            <th>id</th>
-            <th>title</th>
-            <th>manufacturer</th>
-            <th>quantity</th>
-            <th>units</th>
-            <th>price</th>
+            <th>Наименование</th>
+            <th>Производитель</th>
+            <th>Остаток</th>
+            <th>Ед. изм.</th>
+            <th>Цена</th>
         </tr>
         {% for object in objects %}
         <tr>
-            <td>{{ object.id }}</td>
             <td>{{ object.title }}</td>
             <td>{{ object.manufacturer.title }}</td>
             <td>{{ object.quantity }}</td>
             <td>{{ object.units }}</td>
-            <td>{{ object.price }}</td>
+            <td>{{ object.price }} руб./{{ object.units }}</td>
             <td>
-                <button class="operational-button" data-action="update_product" data-id="{{ object.id }}" {% if user.role != 'admin' and user.id !=object.id %} disabled {% endif %}>
+                <button class="operational-button" data-action="update_product" data-id="{{ object.id }}">
                     Изменить
                 </button>
             </td>
             <td>
-                <button class="operational-button" data-action="delete_product" data-id="{{ object.id }}" {% if user.role != 'admin' and user.id !=object.id %} disabled {% endif %}>
+                <button class="operational-button" data-action="delete_product" data-id="{{ object.id }}">
                     Удалить
                 </button>
             </td>

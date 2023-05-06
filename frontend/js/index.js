@@ -15,15 +15,16 @@ function renderForm(response) {
     frame.classList.add('visible-frame');
 }
 
-function productManufacturerCreateListener(elem) {
+function productManufacturerCreateListener(elem, header) {
     if (elem.options[elem.selectedIndex].value === 'add new') {
         const newManufacturerForm = document.createElement('DIV');
         const ok = document.createElement('BUTTON');
         ok.innerText = 'OK';
         ok.addEventListener('click', event => {
           const newOpt = document.createElement('OPTION');
-          newOpt.value = event.target.previousElementSibling.value;
-          newOpt.innerText = event.target.previousElementSibling.value;
+          newOpt.value = event.target.parentElement.previousElementSibling.querySelector('INPUT').value;
+          newOpt.innerText = event.target.parentElement.previousElementSibling.querySelector('INPUT').value;
+          newOpt.setAttribute('selected', 'selected')
           elem.append(newOpt);
           newManufacturerForm.remove();
         });
@@ -33,9 +34,16 @@ function productManufacturerCreateListener(elem) {
         cancel.addEventListener('click', event => {
           newManufacturerForm.remove();
         });
+        const windowHeader = document.createElement('h4');
+        windowHeader.innerText = header;
+        const newManContainer = document.createElement('DIV');
         const newMan = document.createElement('INPUT');
         newMan.name = elem.name;
-        newManufacturerForm.append(...[newMan, ok, cancel]);
+        newManContainer.appendChild(newMan);
+        const buttonsContainer = document.createElement('DIV');
+        buttonsContainer.append(...[ok, cancel])
+        newManufacturerForm.append(...[windowHeader, newManContainer, buttonsContainer]);
+        newManufacturerForm.classList.add('dialog');
         elem.before(newManufacturerForm);
     }
 }
@@ -77,11 +85,22 @@ async function formControlListner(event) {
             const data = {};
             const form = event.target.parentElement.previousElementSibling;
             form.querySelectorAll('INPUT').forEach(child => {
-                data[child.name] = child.value;
+                if (child.value !== 'add new') {
+                    data[child.name] = child.value;
+                }
             });
-            form.querySelectorAll('SELECT').forEach(child => {
-                let value = child.options[child.selectedIndex];
-                data[child.name] = value.value;
+            form.querySelectorAll('SELECT').forEach(select => {
+                if (select.multiple === true) {
+                    data[select.name] = [];
+                    for (let option of select.selectedOptions) {
+                        if (option.value !== 'add new') {
+                            data[select.name].push(...[option.value]);
+                        }
+                    }
+                } else {
+                    let value = select.options[select.selectedIndex];
+                    data[select.name] = value.value;
+                }
             });
             await eel.route(event.target.dataset.action, 'post', params, data)();
         }

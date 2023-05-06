@@ -12,15 +12,23 @@
     <input type="number" name="price" id="price" required>
     <label for="units">Единицы измерения: </label>
     <input type="text" name="units" id="units" required>
-    <select name="manufacturer" id="manufacturer" onclick="productManufacturerCreateListener(this)">
+    <label for="manufacturer">Производитель:</label>
+    <select name="manufacturer" id="manufacturer" onclick="productManufacturerCreateListener(this, 'Введите производителя')">
         {% for manufacturer in manufacturers %}
-          <option value="{{ manufacturer.id }}">
+          <option value="{{ manufacturer.title }}">
             {{ manufacturer.title }}
           </option>
         {% endfor %}
           <option value="add new">
             Добавить
           </option>
+    </select>
+    <label for="categories">Категории:</label>
+    <select name="categories" id="categories" multiple onclick="productManufacturerCreateListener(this, 'Введите категорию')">
+      {% for category in categories %}
+        <option value="{{ category.title }}">{{ category.title }}</option>
+      {% endfor %}
+      <option value="add new">Добавить</option>
     </select>
   </form>
   <div class="controls">

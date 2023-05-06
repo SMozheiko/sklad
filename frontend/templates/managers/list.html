@@ -4,20 +4,23 @@
             Добавить менеджера +
         </button>
     </div>
+    <br>
+    <hr>
+    <br>
     <table>
         <tr>
-            <th>id</th>
-            <th>username</th>
-            <th>role</th>
-            <th>name</th>
-            <th>date register</th>
+            <th>Логин</th>
+            <th>Роль</th>
+            <th>Полное имя</th>
+            <th>Электронный адрес</th>
+            <th>Дата регистрации</th>
         </tr>
         {% for object in objects %}
         <tr>
-            <td>{{ object.id }}</td>
             <td>{{ object.username }}</td>
             <td>{{ object.role }}</td>
             <td>{{ object.full_name }}</td>
+            <td>{{ object.email }}</td>
             <td>{{ object.created_at }}</td>
             <td>
                 <button class="operational-button" data-action="update_manager" data-id="{{ object.id }}" {% if user.role != 'admin' and user.id !=object.id %} disabled {% endif %}>

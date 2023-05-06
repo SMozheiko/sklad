@@ -11,6 +11,9 @@ class BaseView:
     template_path: str = ''
     base_context = {}
 
+    def __init__(self, *args, **kwargs):
+        self.login_required = getattr(self, 'login_required', False)
+
     def get_context(self, request: Request):
         context = self.base_context.copy()
         context.update({'user': request.user})

@@ -32,6 +32,7 @@ form {
 	align-items: space-between;
 	font-size: 20px;
 	margin: 20px;
+	background-color: #FFF;
 }
 form label, select {
 	display: flex;
@@ -39,8 +40,14 @@ form label, select {
 	margin: 10px 10px;
 }
 
+select {
+	font-size: 14px;
+	line-height: 1.5em;
+}
+
 form input {
 	flex-grow: 3;
+	line-height: 1.5em;
 }
 form span {
 	min-width: 40%;
@@ -71,6 +78,23 @@ button {
 }
 .cancel-button {
 	background-color: #731982;	
+}
+.dialog {
+	position: absolute;
+	top: 50%;
+	left: calc(50% - width / 2);
+	display: flex;
+	padding: 30px;
+	flex-direction: column;
+	background-color: #FFF;
+	border-radius: 10px;
+	box-shadow: 0 0 20px 10px gray;
+}
+.dialog div {
+	display: flex;
+}
+.dialog button {
+	margin: 5px;
 }
 table {
     width: 90vw;
@@ -103,6 +127,7 @@ button:disabled {
 .menu {
     flex-grow: 7;
     display: flex;
+    list-style: none;
 }
 .menu-item {
     cursor: pointer;
@@ -116,4 +141,20 @@ button:disabled {
 .active-link {
     font-weight: bold;
     cursor: default;
+}
+.hidden {
+    display: none;
+}
+.aggregate-container {
+    display: flex;
+    justify-content: space-around;
+}
+.filter {
+    display: flex;
+}
+.aggregate > label {
+    font-weight: bold;
+}
+.search {
+    padding: 0 20px;
 }

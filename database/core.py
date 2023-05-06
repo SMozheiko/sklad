@@ -4,24 +4,43 @@ from sqlalchemy.orm import Session
 from settings import db_settings
 
 
-def _get_engine() -> Engine:
-    while True:
-        engine = create_engine(db_settings.get_src())
-        try:
-            yield engine
-        finally:
-            engine.dispose()
+def get_engine() -> Engine:
+    return create_engine(db_settings.get_src())
 
 
-engines = _get_engine()
+def _get_session():
+    engines = get_engine()
+    try:
+        while True:
+            sess = Session(bind=engines)
+            try:
+                yield sess
+            finally:
+                sess.close()
+    except:
+        pass
+    finally:
+        engines.dispose()
 
 
-def _get_session() -> Session:
-    while True:
-        session = Session(bind=next(engines))
-        try:
-            yield session
-        finally:
-            session.close()
+class SessionManager:
 
-session = _get_session()
+    def __init__(self):
+        self._eng = None
+        self.session = None
+
+    def init(self):
+        if not self.session:
+            self._eng = get_engine()
+            self.session = Session(bind=self._eng)
+
+    @property
+    def sess(self) -> Session:
+        return self.session
+
+    def __del__(self):
+        self.session.close()
+        self._eng.dispose()
+
+
+session = SessionManager()
