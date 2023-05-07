@@ -1,0 +1,40 @@
+<div class="form-content">
+  <h2 id="form-title">Измениь продукт</h2>
+  <form action="#" method="post">
+    {% for error in errors %}
+      <p class="error"> {{ error }}</p>
+    {% endfor %}
+    <label for="title">Название: </label>
+    <input type="text" name="title" id="title" value="{{ object.title }}">
+    <label for="quantity">Количество на складе: </label>
+    <input type="number" name="quantity" id="quantity" value="{{ object.quantity }}">
+    <label for="price">Цена: </label>
+    <input type="number" name="price" id="price" value="{{ object.price }}">
+    <label for="units">Единицы измерения: </label>
+    <input type="text" name="units" id="units" value="{{ object.units }}">
+    <label for="manufacturer">Производитель:</label>
+    <select name="manufacturer" id="manufacturer" onclick="productManufacturerCreateListener(this, 'Введите производителя')">
+        {% for manufacturer in manufacturers %}
+          <option value="{{ manufacturer.title }}" {% if object.manufacturer.id == manufacturer.id %}selected {% endif %}>
+            {{ manufacturer.title }}
+          </option>
+        {% endfor %}
+          <option value="add new">
+            Добавить
+          </option>
+    </select>
+    <label for="categories">Категории:</label>
+    <select name="categories" id="categories" multiple onclick="productManufacturerCreateListener(this, 'Введите категорию')">
+      {% for category in categories %}
+        <option value="{{ category.title }}" {% if category.id in object.categories_ids %}{% endif %}>
+            {{ category.title }}
+        </option>
+      {% endfor %}
+      <option value="add new">Добавить</option>
+    </select>
+  </form>
+  <div class="controls">
+    <button class="control-button ok-button" data-id="{{ object.id }}" data-action="update_product">Ok</button>
+    <button class="control-button cancel-button" data-action="cancel">Отмена</button>
+  </div>
+</div>

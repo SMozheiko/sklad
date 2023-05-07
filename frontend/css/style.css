@@ -25,6 +25,9 @@ body {
 	min-width: 30%;
 	box-shadow: 0 0 20px 10px gray;
 }
+.form-content {
+	background-color: #FFF;
+}
 
 form {
 	display: flex;
@@ -95,6 +98,9 @@ button {
 }
 .dialog button {
 	margin: 5px;
+}
+.dialog h4 {
+	font-size: 14px;
 }
 table {
     width: 90vw;

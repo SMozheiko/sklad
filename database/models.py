@@ -88,8 +88,12 @@ class Product(Base, CRUD):
         uselist=False
     )
 
-    @classmethod
-    def create(cls, **kwargs):
+    @property
+    def categories_ids(self) -> list:
+        return [x.id for x in self.categories]
+
+    @staticmethod
+    def get_categories_and_manufacturers(kwargs: dict) -> tuple:
         mf_title = kwargs.pop('manufacturer')
         manufacturer = Manufacturer.get_many(title=mf_title)
         if not manufacturer:
@@ -104,12 +108,29 @@ class Product(Base, CRUD):
                 categories.extend(cat)
             else:
                 categories.append(Category.create(title=title))
+        return manufacturer, categories
 
+    @classmethod
+    def create(cls, **kwargs):
+        manufacturer, categories = cls.get_categories_and_manufacturers(kwargs)
         pk = cls.get_autoincrement()
         instance = cls(id=pk, manufacturer=manufacturer, categories=categories, **kwargs)
         session = sess.sess
         session.add(instance)
         session.commit()
+
+    @classmethod
+    def update(cls, params: dict, **kwargs):
+        manufacturer, categories = cls.get_categories_and_manufacturers(kwargs)
+        kwargs['manufacturer'] = manufacturer
+        kwargs['categories'] = categories
+        instance = cls.get(params.get('id'))
+        if instance:
+            for k, v in kwargs.items():
+                setattr(instance, k, v)
+            session = sess.sess
+            session.add(instance)
+            session.commit()
 
 
 def create_tables(engine: Engine):

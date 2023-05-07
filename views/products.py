@@ -1,6 +1,7 @@
 from database.models import Category, Product, Manufacturer
 from schema.http import Request
-from views.base import BaseListView, BaseCreateView
+from utils import render
+from views.base import BaseListView, BaseCreateView, BaseDeleteView, BaseUpdateView
 from views.mixins import LoginRequiredMixin
 
 
@@ -73,3 +74,34 @@ class ProductsCreateView(LoginRequiredMixin, BaseCreateView):
         context.update(categories=Category.get_many())
         return context
 
+
+class ProductDeleteView(LoginRequiredMixin, BaseDeleteView):
+
+    model = Product
+    template = 'delete.html'
+    template_path = 'products'
+
+
+class ProductUpdateView(LoginRequiredMixin, BaseUpdateView):
+
+    model = Product
+    template = 'update.html'
+    template_path = 'products'
+
+    def post(self, request: Request):
+        try:
+            super().post(request)
+        except Exception as e:
+            context = self.get_context(request)
+            context.update({'errors': [str(e)]})
+            return render(self.template_path, self.template, context)
+
+    def get_context(self, request: Request) -> dict:
+        context = super().get_context(request)
+        context.update(
+            {
+                'categories': Category.query().all(),
+                'manufacturers': Manufacturer.query().all()
+            }
+        )
+        return context
