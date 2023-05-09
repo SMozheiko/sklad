@@ -25,6 +25,7 @@ class ProductsListView(LoginRequiredMixin, BaseListView):
             context['objects'] = [x for x in context['objects'] if x.title.lower().find(search.lower()) != -1]
             return context
 
+        queryset = Product.query()
         context = {
             'user': request.user,
             'categories': Category.get_many(),
@@ -32,30 +33,24 @@ class ProductsListView(LoginRequiredMixin, BaseListView):
         }
         manufacturers = request.params.get('filter').get('manufacturer')
         categories = request.params.get('filter').get('category')
-        if manufacturers and categories:
-            queryset = self.model.query().filter(self.model.manufacturer_id.in_(manufacturers)).all()
-            queryset = [x for x in queryset if set([a.id for a in x.categories]).intersection(set(categories))]
-        elif not manufacturers and categories:
-            queryset = []
-            exist = set()
-            cats = [x for x in context['categories'] if x.id in categories]
-            for category in cats:
-                for item in category.products:
-                    if item.id not in exist:
-                        queryset.append(item)
-                        exist.add(item.id)
-        elif not manufacturers and not categories:
-            queryset = self.model.get_many()
-        else:
-            queryset = self.model.query().filter(self.model.manufacturer_id.in_(manufacturers)).all()
-            for x in queryset:
-                print(x.categories, x.title)
+        if manufacturers:
+            queryset = queryset.filter(Product.manufacturer_id.in_(manufacturers))
+        if categories:
+            queryset = queryset.filter(Product.category_id.in_(categories))
 
+        ordering = bool(int(request.params.get('sorting').get('order')))
         if request.params.get('sorting').get('sort') == 'manufacturer':
-            queryset.sort(key=lambda x: x.manufacturer.title, reverse=bool(int(request.params.get('sorting').get('order'))))
+            if ordering:
+                queryset = queryset.order_by(Product.manufacturer_id.desc())
+            else:
+                queryset = queryset.order_by(Product.manufacturer_id.asc())
         else:
-            queryset.sort(key=lambda x: x.title, reverse=bool(int(request.params.get('sorting').get('order'))))
-        context['objects'] = queryset
+            if ordering:
+                queryset = queryset.order_by(Product.title.desc())
+            else:
+                queryset = queryset.order_by(Product.title.asc())
+
+        context['objects'] = queryset.all()
         return context
 
 

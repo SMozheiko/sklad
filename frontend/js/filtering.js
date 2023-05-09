@@ -26,7 +26,7 @@ function filterProducts(button) {
     selectFilter.forEach(select => {
         for (let option of select.selectedOptions) {
             if (option.value !== 'all') {
-                params.filter[select.name].push(...[+option.value])
+                params.filter[select.name].push(...[option.value])
             }
         }    
     });

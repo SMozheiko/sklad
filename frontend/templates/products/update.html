@@ -23,10 +23,10 @@
             Добавить
           </option>
     </select>
-    <label for="categories">Категории:</label>
-    <select name="categories" id="categories" multiple onclick="productManufacturerCreateListener(this, 'Введите категорию')">
+    <label for="category">Категория:</label>
+    <select name="category" id="category" onclick="productManufacturerCreateListener(this, 'Введите категорию')">
       {% for category in categories %}
-        <option value="{{ category.title }}" {% if category.id in object.categories_ids %}{% endif %}>
+        <option value="{{ category.title }}" {% if category.id == object.category_id %}selected{% endif %}>
             {{ category.title }}
         </option>
       {% endfor %}

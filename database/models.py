@@ -38,29 +38,27 @@ class Manager(Base, CRUD):
         super().create(**kwargs)
 
 
-association_table = Table(
-    "products_categories",
-    Base.metadata,
-    Column("product_id", ForeignKey("products.id")),
-    Column("category_id", ForeignKey("categories.id")),
-    PrimaryKeyConstraint('product_id', 'category_id', name='composite_pk')
-)
-
-
 class Category(Base, CRUD):
     __tablename__ = 'categories'
-    id = Column(BigInteger, primary_key=True)
-    title = Column(String, nullable=False, unique=True)
+    title = Column(String, nullable=False, unique=True, primary_key=True)
     products = relationship(
         'Product',
-        secondary=association_table, back_populates="categories"
+        back_populates="category",
+        uselist=True
     )
+
+    @classmethod
+    def create(cls, **kwargs):
+        session = sess.sess
+        instance = cls(title=kwargs.get('title'))
+        session.add(instance)
+        session.commit()
+        return instance
 
 
 class Manufacturer(Base, CRUD):
     __tablename__ = 'manufacturers'
-    id = Column(BigInteger, primary_key=True)
-    title = Column(String, nullable=False, unique=True)
+    title = Column(String, nullable=False, unique=True, primary_key=True)
 
     products = relationship(
         'Product',
@@ -68,29 +66,35 @@ class Manufacturer(Base, CRUD):
         uselist=True
     )
 
+    @classmethod
+    def create(cls, **kwargs):
+        session = sess.sess
+        instance = cls(title=kwargs.get('title'))
+        session.add(instance)
+        session.commit()
+        return instance
+
 
 class Product(Base, CRUD):
     __tablename__ = 'products'
     id = Column(BigInteger, primary_key=True)
     title = Column(String, nullable=False, unique=True)
-    manufacturer_id = Column(ForeignKey('manufacturers.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    manufacturer_id = Column(ForeignKey('manufacturers.title', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    category_id = Column(ForeignKey('categories.title', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     quantity = Column(Float, nullable=False, default=0.0)
     price = Column(Float, nullable=False, default=0.0)
     units = Column(String, nullable=False)
 
-    categories = relationship(
+    category = relationship(
         Category,
-        secondary=association_table, back_populates="products"
+        back_populates="products",
+        uselist=False
     )
     manufacturer = relationship(
         Manufacturer,
         back_populates='products',
         uselist=False
     )
-
-    @property
-    def categories_ids(self) -> list:
-        return [x.id for x in self.categories]
 
     @staticmethod
     def get_categories_and_manufacturers(kwargs: dict) -> tuple:
@@ -100,30 +104,28 @@ class Product(Base, CRUD):
             manufacturer = Manufacturer.create(title=mf_title)
         else:
             manufacturer = manufacturer[0]
-        category_names = kwargs.pop('categories')
-        categories = []
-        for title in category_names:
-            cat = Category.get_many(title=title)
-            if cat:
-                categories.extend(cat)
-            else:
-                categories.append(Category.create(title=title))
-        return manufacturer, categories
+        category_name = kwargs.pop('category')
+        category = Category.get_many(title=category_name)
+        if not category:
+            category = Category.create(title=category_name)
+        else:
+            category = category[0]
+        return manufacturer, category
 
     @classmethod
     def create(cls, **kwargs):
-        manufacturer, categories = cls.get_categories_and_manufacturers(kwargs)
+        manufacturer, category = cls.get_categories_and_manufacturers(kwargs)
         pk = cls.get_autoincrement()
-        instance = cls(id=pk, manufacturer=manufacturer, categories=categories, **kwargs)
+        instance = cls(id=pk, manufacturer=manufacturer, category=category, **kwargs)
         session = sess.sess
         session.add(instance)
         session.commit()
 
     @classmethod
     def update(cls, params: dict, **kwargs):
-        manufacturer, categories = cls.get_categories_and_manufacturers(kwargs)
+        manufacturer, category = cls.get_categories_and_manufacturers(kwargs)
         kwargs['manufacturer'] = manufacturer
-        kwargs['categories'] = categories
+        kwargs['category'] = category
         instance = cls.get(params.get('id'))
         if instance:
             for k, v in kwargs.items():

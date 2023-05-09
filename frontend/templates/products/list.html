@@ -19,7 +19,7 @@
                     }
                 }">Выбрать все</option>
                 {% for category in categories %}
-                    <option value="{{ category.id }}" onclick="(el) => {
+                    <option value="{{ category.title }}" onclick="(el) => {
                         el.parentElement.options[0].setattr('selected' = '')
                     }">{{ category.title }}</option>
                 {% endfor %}
@@ -34,7 +34,7 @@
                     }
                 }">Выбрать все</option>
                 {% for manufacturer in manufacturers %}
-                    <option value="{{ manufacturer.id }}" onclick="(el) => {
+                    <option value="{{ manufacturer.title }}" onclick="(el) => {
                         el.parentElement.options[0].setattr('selected' = '')
                     }">{{ manufacturer.title }}</option>
                 {% endfor %}
@@ -68,6 +68,7 @@
     <br>
     <table>
         <tr>
+            <th>Категория</th>
             <th>Наименование</th>
             <th>Производитель</th>
             <th>Остаток</th>
@@ -76,8 +77,9 @@
         </tr>
         {% for object in objects %}
         <tr>
+            <td>{{ object.category_id }}</td>
             <td>{{ object.title }}</td>
-            <td>{{ object.manufacturer.title }}</td>
+            <td>{{ object.manufacturer_id }}</td>
             <td>{{ object.quantity }}</td>
             <td>{{ object.units }}</td>
             <td>{{ object.price }} руб./{{ object.units }}</td>
