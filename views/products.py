@@ -1,3 +1,5 @@
+import math
+
 from database.models import Category, Product, Manufacturer
 from schema.http import Request
 from utils import render
@@ -10,47 +12,66 @@ class ProductsListView(LoginRequiredMixin, BaseListView):
     model = Product
     template = 'list.html'
     template_path = 'products'
+
+    def __init__(self):
+        super().__init__()
+        self.request_params = {}
     
     def get_context(self, request: Request):
-        if not request.params:
-            context = super().get_context(request)
-            context['categories'] = Category.get_many()
-            context['manufacturers'] = Manufacturer.get_many()
-            return context
-        if request.params.get('search'):
-            search = request.params.pop('search')
-            context = super().get_context(request)
-            context['categories'] = Category.get_many()
-            context['manufacturers'] = Manufacturer.get_many()
-            context['objects'] = [x for x in context['objects'] if x.title.lower().find(search.lower()) != -1]
-            return context
-
+        self.request_params.update(request.params)
         queryset = Product.query()
         context = {
             'user': request.user,
             'categories': Category.get_many(),
             'manufacturers': Manufacturer.get_many()
         }
-        manufacturers = request.params.get('filter').get('manufacturer')
-        categories = request.params.get('filter').get('category')
+        page = self.request_params.get('page', 1)
+        limit = self.request_params.get('limit', 20)
+
+        search = self.request_params.get('search', '')
+        if search:
+            queryset = queryset.filter(Product.title.icontains(search))
+
+        manufacturers = self.request_params.get('filter', {}).get('manufacturer', [])
+        categories = self.request_params.get('filter', {}).get('category', [])
         if manufacturers:
             queryset = queryset.filter(Product.manufacturer_id.in_(manufacturers))
         if categories:
             queryset = queryset.filter(Product.category_id.in_(categories))
 
-        ordering = bool(int(request.params.get('sorting').get('order')))
-        if request.params.get('sorting').get('sort') == 'manufacturer':
+        ordering = self.request_params.get('sorting', {}).get('order')
+        if ordering:
+            ordering = bool(int(ordering))
+        if self.request_params.get('sorting', {}).get('sort') == 'manufacturer':
             if ordering:
                 queryset = queryset.order_by(Product.manufacturer_id.desc())
             else:
                 queryset = queryset.order_by(Product.manufacturer_id.asc())
+        elif self.request_params.get('sorting', {}).get('sort') == 'category':
+            if ordering:
+                queryset = queryset.order_by(Product.category_id.desc())
+            else:
+                queryset = queryset.order_by(Product.category_id.asc())
         else:
             if ordering:
                 queryset = queryset.order_by(Product.title.desc())
             else:
                 queryset = queryset.order_by(Product.title.asc())
 
-        context['objects'] = queryset.all()
+        queryset = queryset.offset(
+                int((page - 1) * limit)
+            ).limit(
+                int(limit)
+            ).all()
+        context['objects'] = queryset
+        context['page'] = page
+        context['limit'] = limit
+        context['pages'] = int(math.ceil(Product.get_count() / limit))
+        context.setdefault('filter', {})['category'] = categories
+        context.setdefault('filter', {})['manufacturer'] = manufacturers
+        context.setdefault('sorting', {})['order'] = ordering
+        context.setdefault('sorting', {})['sort'] = self.request_params.get('sorting', {}).get('sort')
+        context['search'] = search
         return context
 
 

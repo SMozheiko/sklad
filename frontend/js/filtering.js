@@ -1,10 +1,15 @@
 function searchProducts(el) {
+    const data = el.parentElement.querySelector('INPUT');
     const params = {};
-    params[el.name] = el.value;
+    if (!el.dataset.drop) {
+        params[data.name] = data.value;
+    } else {
+        params[data.name] = '';
+    }
     const func = async (params, el) => {
         await eel.route(el.dataset.action, 'get', params, {})();
     };
-    func(params, el);
+    func(params, data);
 }
 
 function filterProducts(button) {
@@ -21,19 +26,21 @@ function filterProducts(button) {
             'order': null
         }
     }
-
-    const selectFilter = filters.querySelectorAll('SELECT');
-    selectFilter.forEach(select => {
-        for (let option of select.selectedOptions) {
-            if (option.value !== 'all') {
-                params.filter[select.name].push(...[option.value])
+    if (!button.dataset.drop) {
+        const selectFilter = filters.querySelectorAll('SELECT');
+        selectFilter.forEach(select => {
+            for (let option of select.selectedOptions) {
+                if (option.value !== 'all') {
+                    params.filter[select.name].push(...[option.value])
+                }
             }
-        }    
-    });
-    const sortingFilter = sorting.querySelectorAll('SELECT');
-    sortingFilter.forEach(select => {
-        params.sorting[select.name] = select.options[select.selectedIndex].value;
-    });
+        });
+        const sortingFilter = sorting.querySelectorAll('SELECT');
+        sortingFilter.forEach(select => {
+            params.sorting[select.name] = select.options[select.selectedIndex].value;
+        });
+    }
+
     const func = async (params, button) => {
         await eel.route(button.dataset.action, 'get', params, {})();
     };

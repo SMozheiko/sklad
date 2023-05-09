@@ -11,7 +11,7 @@
         <div class="filter aggregate">
             <label for="category"><span>Категории:</span></label>
             <select name="category" id="category" multiple size="3">
-                <option value="all" selected onselect="(el) => {
+                <option value="all" {% if not filter.category %}selected{% endif %} onselect="(el) => {
                     for (let i in el.parentElement.options) {
                         if (i > 0) {
                             el.parentElement.options[i].setattr('selected' = true)
@@ -19,14 +19,14 @@
                     }
                 }">Выбрать все</option>
                 {% for category in categories %}
-                    <option value="{{ category.title }}" onclick="(el) => {
+                    <option value="{{ category.title }}" {% if category.title in filter.category %}selected{% endif %} onclick="(el) => {
                         el.parentElement.options[0].setattr('selected' = '')
                     }">{{ category.title }}</option>
                 {% endfor %}
             </select>
             <label for="manufacturer"><span>Производители:</span></label>
             <select name="manufacturer" id="manufacturer" multiple size="3">
-                <option value="all" selected onselect="(el) => {
+                <option value="all" {% if not filter.manufacturer %}selected{% endif %} onselect="(el) => {
                     for (let i in el.parentElement.options) {
                         if (i > 0) {
                             el.parentElement.options[i].setattr('selected' = true)
@@ -34,7 +34,7 @@
                     }
                 }">Выбрать все</option>
                 {% for manufacturer in manufacturers %}
-                    <option value="{{ manufacturer.title }}" onclick="(el) => {
+                    <option value="{{ manufacturer.title }}" {% if manufacturer.title in filter.manufacturer %}selected{% endif %} onclick="(el) => {
                         el.parentElement.options[0].setattr('selected' = '')
                     }">{{ manufacturer.title }}</option>
                 {% endfor %}
@@ -43,28 +43,37 @@
         <div class="sorting aggregate">
             <label for="sort"><span>Сортировать:</span></label>
             <select name="sort" id="sort">
-                <option value="title" selected>Название</option>
-                <option value="manufacturer">Производитель</option>
+                <option value="title" {% if sorting.sort == "title" %}selected{% endif %}>Название</option>
+                <option value="manufacturer" {% if sorting.sort == "manufacturer" %}selected{% endif %}>Производитель</option>
+                <option value="category" {% if sorting.sort == "category" %}selected{% endif %}>Категория</option>
             </select>
             <select name="order" id="order">
-                <option value="0" selected>По возрастанию</option>
-                <option value="1">По убыванию</option>
+                <option value="0" {% if not sorting.order %}selected{% endif %}>По возрастанию</option>
+                <option value="1" {% if sorting.order %}selected{% endif %}>По убыванию</option>
             </select>
         </div>
         <div class="aggregate">
-            <button class="search-button" onclick="filterProducts(this)" data-action="products_list">Применить</button>
+            <button class="search-button" onclick="filterProducts(this)" data-drop="" data-action="products_list">Применить</button>
+            <button class="search-button" onclick="filterProducts(this)" data-drop="1" data-action="products_list">Сбросить</button>
         </div>
     </div>
     <br>
     <hr>
     <br>
-    <div class="search">
+    <div class="search aggregate">
         <label for="search"><span>Поиск: </span></label>
-        <input type="text" name="search" id="search" data-action="products_list">
-        <button class="search-button" onclick="searchProducts(this.previousElementSibling)">Найти</button>
+        <input type="text" name="search" id="search" data-action="products_list" value="{{ search }}">
+        <button class="search-button" data-drop="" onclick="searchProducts(this)">Найти</button>
+        <button class="search-button" data-drop="1" onclick="searchProducts(this)">Показать все</button>
     </div>
     <br>
     <hr>
+    <br>
+    <div class="pagination">
+        <button class="operational-button" {% if page == 1 %}disabled{% endif %} >Пердыдущая</button>
+        <span class="page-number">Страница: {{ page }} из {{ pages }}</span>
+        <button class="operational-button" {% if page == pages %}disabled{% endif %} >Следующая</button>
+    </div>
     <br>
     <table>
         <tr>
