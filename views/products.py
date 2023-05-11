@@ -72,7 +72,7 @@ class ProductsListView(LoginRequiredMixin, BaseListView):
         context.setdefault('sorting', {})['order'] = ordering
         context.setdefault('sorting', {})['sort'] = self.request_params.get('sorting', {}).get('sort')
         context['search'] = search
-        
+
         return context
 
 
