@@ -25,8 +25,8 @@ class ProductsListView(LoginRequiredMixin, BaseListView):
             'categories': Category.get_many(),
             'manufacturers': Manufacturer.get_many()
         }
-        page = self.request_params.get('page', 1)
-        limit = self.request_params.get('limit', 20)
+        page = int(self.request_params.get('page', 1))
+        limit = int(self.request_params.get('limit', 10))
 
         search = self.request_params.get('search', '')
         if search:
@@ -57,16 +57,25 @@ class ProductsListView(LoginRequiredMixin, BaseListView):
                 queryset = queryset.order_by(Product.title.desc())
             else:
                 queryset = queryset.order_by(Product.title.asc())
+        pages = int(math.ceil(queryset.count() / limit))
 
+        if page > pages:
+            page = pages
+            self.request_params['page'] = pages
+        if pages == 0:
+            page = 1
+            pages = 1
+            self.request_params['page'] = pages
+            self.request_params['pages'] = pages
         queryset = queryset.offset(
-                int((page - 1) * limit)
+                (page - 1) * limit
             ).limit(
-                int(limit)
+                limit
             ).all()
         context['objects'] = queryset
         context['page'] = page
         context['limit'] = limit
-        context['pages'] = int(math.ceil(Product.get_count() / limit))
+        context['pages'] = pages
         context.setdefault('filter', {})['category'] = categories
         context.setdefault('filter', {})['manufacturer'] = manufacturers
         context.setdefault('sorting', {})['order'] = ordering

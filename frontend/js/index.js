@@ -71,7 +71,9 @@ async function formControlListner(event) {
     if (event.target.classList.contains('control-button')) {
         if (event.target.dataset.action === 'cancel') {
             const frame = document.querySelector('.frame');
-            frame.innerHTML = '';
+            for (let child of frame.children) {
+                child.remove();
+            }
             frame.classList.remove('visible-frame');
         } else if (event.target.dataset.action === 'exit') {
             window.close();

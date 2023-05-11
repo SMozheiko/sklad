@@ -12,6 +12,17 @@ function searchProducts(el) {
     func(params, data);
 }
 
+
+function pagintionChangeListener(el) {
+    const params = {};
+    params[el.name] = el.options[el.selectedIndex].value;
+    const func = async (el, params) => {
+        await eel.route(el.dataset.action, 'get', params, {})();
+    }
+    func(el, params);
+}
+
+
 function filterProducts(button) {
     const el = button.parentElement.parentElement;
     const filters = el.querySelector('.filter');

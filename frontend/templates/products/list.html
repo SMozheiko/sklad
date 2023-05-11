@@ -70,9 +70,19 @@
     <hr>
     <br>
     <div class="pagination">
-        <button class="operational-button" {% if page == 1 %}disabled{% endif %} >Пердыдущая</button>
+        <button class="operational-button" data-action="products_list" data-page="{{ page - 1 }}" {% if page == 1 %}disabled{% endif %} >
+            Пердыдущая
+        </button>
         <span class="page-number">Страница: {{ page }} из {{ pages }}</span>
-        <button class="operational-button" {% if page == pages %}disabled{% endif %} >Следующая</button>
+        <button class="operational-button" data-action="products_list" data-page="{{ page + 1 }}" {% if page == pages %}disabled{% endif %} >
+            Следующая
+        </button>
+        <select name="limit" id="limit" onchange="pagintionChangeListener(this)" data-action="products_list">
+            <option value="2" {% if limit == 2 %}selected{% endif %} >2</option>
+            <option value="10" {% if limit == 10 %}selected{% endif %}>10</option>
+            <option value="20" {% if limit == 20 %}selected{% endif %}>20</option>
+            <option value="50" {% if limit == 50 %}selected{% endif %}>50</option>
+        </select>
     </div>
     <br>
     <table>
