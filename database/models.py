@@ -135,6 +135,14 @@ class Product(Base, CRUD):
             session.commit()
 
 
+class Customer(Base, CRUD):
+    __tablename__ = 'customers'
+    id = Column(BigInteger, primary_key=True)
+    title = Column(String, nullable=False, unique=True)
+    inn = Column(String)
+    kpp = Column(String)
+
+
 def create_tables(engine: Engine):
     Base.metadata.create_all(bind=engine, checkfirst=True)
     sess.init()
