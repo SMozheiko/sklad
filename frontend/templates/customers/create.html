@@ -1,0 +1,38 @@
+<div class="form-content">
+    <h2 id="form-title">Создать контрагена</h2>
+    <form action="#" method="post">
+      {% for error in errors %}
+        <p class="error"> {{ error }}</p>
+      {% endfor %}
+      <br>
+        <h4>Основная информация</h4>
+      <label for="kind">Форма организации: </label>
+      <input type="text" name="kind" id="kind">
+      <label for="title">Название: </label>
+      <input type="text" name="title" id="title" required>
+      <label for="phone">Номер телефона: </label>
+      <input type="phone" name="phone" id="phone">
+      <br>
+      <h4>Банковские реквизиты</h4>
+      <label for="inn">ИНН: </label>
+      <input type="text" name="inn" id="inn">
+      <label for="kpp">КПП: </label>
+      <input type="text" name="kpp" id="kpp">
+      <br>
+      <h4>Адрес</h4>
+      <label for="region">Область: </label>
+      <input type="text" name="region" id="region">
+      <label for="district">Район: </label>
+      <input type="text" name="district" id="district">
+      <label for="place">Населенный пункт: </label>
+      <input type="text" name="place" id="place">
+      <label for="street">Улица: </label>
+      <input type="text" name="street" id="street">
+      <label for="building">Номер дома: </label>
+      <input type="text" name="building" id="building">
+    </form>
+    <div class="controls">
+      <button class="control-button ok-button" data-action="create_customer">Ok</button>
+      <button class="control-button cancel-button" data-action="cancel">Отмена</button>
+    </div>
+  </div>

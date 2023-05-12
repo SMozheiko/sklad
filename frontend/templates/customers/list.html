@@ -1,0 +1,52 @@
+<div class="content">
+    <div class="buttons">
+        <button class="operational-button" data-action="create_customer">
+            Добавить контрагента +
+        </button>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="search aggregate">
+        <label for="search"><span>Поиск: </span></label>
+        <input type="text" name="search" id="search" data-action="customers_list" value="{{ search }}">
+        <button class="search-button" data-drop="" onclick="searchProducts(this)">Найти</button>
+        <button class="search-button" data-drop="1" onclick="searchProducts(this)">Показать все</button>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="pagination">
+        <button class="operational-button" data-action="customers_list" data-page="{{ page - 1 }}" {% if page == 1 %}disabled{% endif %} >
+            Пердыдущая
+        </button>
+        <span class="page-number">Страница: {{ page }} из {{ pages }}</span>
+        <button class="operational-button" data-action="customers_list" data-page="{{ page + 1 }}" {% if page == pages %}disabled{% endif %} >
+            Следующая
+        </button>
+        <select name="limit" id="limit" onchange="pagintionChangeListener(this)" data-action="customers_list">
+            <option value="2" {% if limit == 2 %}selected{% endif %} >2</option>
+            <option value="10" {% if limit == 10 %}selected{% endif %}>10</option>
+            <option value="20" {% if limit == 20 %}selected{% endif %}>20</option>
+            <option value="50" {% if limit == 50 %}selected{% endif %}>50</option>
+        </select>
+    </div>
+    <br>
+    <table>
+        <tr>
+            <th>Название</th>
+            <th>Долг/переплата</th>
+        </tr>
+        {% for object in objects %}
+        <tr>
+            <td>{{ object.verbose_title }}</td>
+            <td>{{ object.payments }} руб.</td>
+            <td>
+                <button class="operational-button" data-action="delete_customer" data-id="{{ object.id }}">
+                    Удалить
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

@@ -137,10 +137,36 @@ class Product(Base, CRUD):
 
 class Customer(Base, CRUD):
     __tablename__ = 'customers'
+
     id = Column(BigInteger, primary_key=True)
+    kind = Column(String, nullable=True)
     title = Column(String, nullable=False, unique=True)
-    inn = Column(String)
-    kpp = Column(String)
+    inn = Column(String, nullable=True)
+    kpp = Column(String, nullable=True)
+    region = Column(String, nullable=True)
+    district = Column(String, nullable=True)
+    place = Column(String, nullable=True)
+    street = Column(String, nullable=True)
+    building = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+
+    @property
+    def payments(self):
+        return 0
+
+    @property
+    def verbose_title(self) -> str:
+        return f'{self.kind} "{self.title}"' if self.kind else self.title
+
+    @property
+    def address(self) -> str:
+        return '{}{}{}{}{}'.format(
+            self.region + ', ' if self.region else '',
+            self.district + ', ' if self.district else '',
+            self.place + ', ' if self.place else '',
+            self.street + ', ' if self.street else '',
+            f'д. {self.building}' if self.building else ''
+        )
 
 
 def create_tables(engine: Engine):
@@ -156,5 +182,12 @@ def create_tables(engine: Engine):
                 'name': 'admin',
                 'surname': 'god',
                 'email': 'email@email.ru'
+            }
+        )
+    count = Customer.get_count()
+    if not count:
+        Customer.create(
+            **{
+                'title': 'Частное лицо'
             }
         )

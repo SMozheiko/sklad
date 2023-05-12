@@ -12,5 +12,10 @@
         <span class="user-name">
             {{ user.full_name }}
         </span>
+        {% if user %}
+            <button data-action="logout" id="logout" class="operational-button">
+                Выйти
+            </button>
+        {% endif %}
     </div>
 </div>

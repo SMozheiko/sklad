@@ -111,7 +111,12 @@ async function formControlListner(event) {
 
 async function PageClickListener(event) {
     event.preventDefault();
-    if (event.target.classList.contains('operational-button')) {
+    if (event.target.id === 'logout') {
+        document.querySelector('#header').innerHTML = null;
+        document.querySelector('#body').innerHTML = null;
+        await eel.route(event.target.dataset.action, 'get', {}, {})
+    }
+    else if (event.target.classList.contains('operational-button')) {
         const params = {}
         for (let key in event.target.dataset) {
             if (key !== 'action') {
