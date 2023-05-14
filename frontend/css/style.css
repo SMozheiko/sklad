@@ -42,7 +42,10 @@ form label, select {
 	justify-content: space-between;
 	margin: 10px 10px;
 }
-
+label {
+	font-weight: bolder;
+	margin: 10px 10px;
+}
 select {
 	font-size: 14px;
 	line-height: 1.5em;
@@ -102,14 +105,14 @@ button {
 .dialog h4 {
 	font-size: 14px;
 }
-table {
+.table {
     width: 90vw;
 	margin: 0 auto;
 }
-tr:nth-child(2n) {
+.table tr:nth-child(2n) {
 	background-color: gainsboro;
 }
-td {
+.table td {
 	text-align: center;
 }
 button:disabled {

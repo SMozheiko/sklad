@@ -2,7 +2,8 @@ from routing.router import Router, URLPattern
 from views.managers import ManagersListView, ManagerCreateView, ManagerUpdateView, ManagerDeleteView, \
     ManagerPasswordResetView
 from views.products import ProductsListView, ProductsCreateView, ProductDeleteView, ProductUpdateView
-from views.customers import CustomerListView, CustomerCreateView, CustomerDeleteView
+from views.customers import CustomerListView, CustomerCreateView, CustomerDeleteView, CustomerDetailView, \
+    CustomerUpdateView
 
 
 urlpatterns = [
@@ -18,6 +19,8 @@ urlpatterns = [
     URLPattern('customerss_list', CustomerListView(), methods=['get'], tag='body', title='Контрагенты'),
     URLPattern('create_customer', CustomerCreateView(), methods=['get', 'post'], tag='frame'),
     URLPattern('delete_customer', CustomerDeleteView(), methods=['get', 'post'], tag='frame'),
+    URLPattern('detail_customer', CustomerDetailView(), methods=['get', 'post'], tag='frame'),
+    URLPattern('update_customer', CustomerUpdateView(), methods=['get', 'post'], tag='frame'),
 ]
 
 router = Router()

@@ -3,7 +3,7 @@ import math
 from database.models import Customer
 from schema.http import Request
 from utils import render
-from views.base import BaseListView, BaseDeleteView, BaseCreateView
+from views.base import BaseListView, BaseDeleteView, BaseCreateView, BaseUpdateView, BaseDetailView
 from views.mixins import LoginRequiredMixin
 
 
@@ -73,3 +73,17 @@ class CustomerCreateView(LoginRequiredMixin, BaseCreateView):
     
     def get(self, request: Request):
         return render(self.template_path, self.template, {})
+
+
+class CustomerDetailView(LoginRequiredMixin, BaseDetailView):
+    
+    model = Customer
+    template = 'detail.html'
+    template_path = 'customers'
+
+
+class CustomerUpdateView(LoginRequiredMixin, BaseUpdateView):
+
+    model = Customer()
+    template = 'update.html'
+    template_path = 'customers'

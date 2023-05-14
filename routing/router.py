@@ -87,12 +87,12 @@ class Router:
         if request.action == 'login':
             return self.login(request)
 
-        _method, tag = getattr(self, f'_{method}').get(action)
-
-        if _method.login_required and self.user is None:
-            return self.login(request)
+        _method, tag = getattr(self, f'_{method}', {}).get(action, (None, None))
 
         if _method:
+            if _method.login_required and self.user is None:
+                return self.login(request)
+        
             if method == 'get':
                 return Response(tag=tag, html=_method.get(request), header=self.get_header_html(request.action))
                 
@@ -101,4 +101,7 @@ class Router:
                 return self.dispatch(*self.actions[0])
             
             return Response(tag=tag, html=result, header=self.get_header_html(request.action))
-        return Response(tag='body', html='Not Found')
+        return Response(
+            tag='body', 
+            html='<h2>Извините, данныя функция пока недоступна либо что то пошло не так. Пожалуйста, обратитесь к разработчику</h2>'
+        )

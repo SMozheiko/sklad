@@ -57,4 +57,3 @@ function filterProducts(button) {
     };
     func(params, button);
 }
-

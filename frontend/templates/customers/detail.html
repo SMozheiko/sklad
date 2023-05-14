@@ -1,0 +1,25 @@
+<div class="form-content">
+    <h2 id="form-title">{{ object.verbose_title }}</h2>
+    <table>
+        <tr>
+            <td><label>Адрес:</label></td>
+            <td>{{ object.address }}</td>
+        </tr>
+        <tr>
+            <td><label>ИНН:</label></td>
+            <td>{{ object.inn }}</td>
+        </tr>
+        <tr>
+            <td><label>КПП:</label></td>
+            <td>{{ object.kpp }}</td>
+        </tr>
+        <tr>
+            <td><label>Телефон:</label></td>
+            <td>{{ object.phone }}</td>
+        </tr>
+    </table>
+    <div class="controls">
+        <button class="operational-button ok-button" data-action="update_customer" data-id="{{ object.id }}">Изменить</button>
+        <button class="control-button cancel-button" data-action="cancel">Закрыть</button>
+      </div>
+</div>
