@@ -6,7 +6,9 @@
 body {
 	position: relative;
 }
-
+.margin-left-10 {
+	margin-left: 10px;
+}
 .frame {
 	position: absolute;
 	display: none;
@@ -29,18 +31,22 @@ body {
 	background-color: #FFF;
 }
 
+fieldset {
+    padding: 5px;
+}
+
 form {
 	display: flex;
 	flex-direction: column;
 	align-items: space-between;
-	font-size: 20px;
+	font-size: 16px;
 	margin: 20px;
 	background-color: #FFF;
 }
 form label, select {
 	display: flex;
 	justify-content: space-between;
-	margin: 10px 10px;
+	margin: 5px 5px;
 }
 label {
 	font-weight: bolder;
@@ -53,7 +59,7 @@ select {
 
 form input {
 	flex-grow: 3;
-	line-height: 1.5em;
+	line-height: 1.2em;
 }
 form span {
 	min-width: 40%;
@@ -132,6 +138,7 @@ button:disabled {
     justify-content: space-between;
 	height: 100%;
 	width: 100%;
+	padding: 10px;
 }
 .menu {
     flex-grow: 7;
@@ -146,6 +153,12 @@ button:disabled {
     display: flex;
     flex-grow: 3;
 	align-items: center;
+	justify-content: space-between;
+}
+.user-name {
+	font-size: 20px;
+	font-weight: 600;
+	font-style: italic;
 }
 .active-link {
     font-weight: bold;
