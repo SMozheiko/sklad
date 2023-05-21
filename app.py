@@ -1,7 +1,6 @@
 import eel
 
 from routing.urls import router
-from schema.http import Response
 
 
 @eel.expose

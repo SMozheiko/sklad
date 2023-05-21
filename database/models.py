@@ -1,11 +1,11 @@
 import datetime
 
-from sqlalchemy import Column, String, Float, BigInteger, Enum, Engine, DateTime, Table, \
-    ForeignKey, Boolean, PrimaryKeyConstraint
+from sqlalchemy import Column, String, Float, BigInteger, Engine, DateTime, ForeignKey, Boolean, Date
 from sqlalchemy.orm import declarative_base, relationship
 
 from database.crud import CRUD
 from database.core import session as sess
+from settings import settings
 from utils import get_hashed_password
 
 
@@ -23,6 +23,12 @@ class Manager(Base, CRUD):
     email = Column(String, nullable=False)
     one_time_pass = Column(Boolean, nullable=False, default=True)
     _created_at = Column(DateTime, name='created_at', nullable=False, default=datetime.datetime.now)
+
+    orders = relationship(
+        'Order',
+        back_populates='customer',
+        uselist=True
+    )
 
     @property
     def full_name(self):
@@ -150,6 +156,12 @@ class Customer(Base, CRUD):
     building = Column(String, nullable=True)
     phone = Column(String, nullable=True)
 
+    orders = relationship(
+        'Order',
+        back_populates='customer',
+        uselist=True
+    )
+
     @property
     def payments(self):
         return 0
@@ -167,6 +179,57 @@ class Customer(Base, CRUD):
             self.street + ', ' if self.street else '',
             f'д. {self.building}' if self.building else ''
         )
+
+
+class Order(Base, CRUD):
+    __tablename__ = 'orders'
+    id = Column(BigInteger, primary_key=True)
+    manager_id = Column(ForeignKey(Manager.id, onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    customer_id = Column(ForeignKey(Customer.id, onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now)
+    updated_at_at = Column(DateTime, nullable=True, default=datetime.datetime.now)
+    cost = Column(Float(decimal_return_scale=2), nullable=False, default=0)
+    nds = Column(Float(decimal_return_scale=2), nullable=False, default=settings.base_nds)
+    total_cost = Column(Float(decimal_return_scale=2), nullable=False, default=0)
+    payed = Column(Float(decimal_return_scale=2), nullable=False, default=0)
+    delivery_date = Column(Date, nullable=False, default=datetime.datetime.today)
+
+    manager = relationship(
+        Manager,
+        back_populates='orders',
+        uselist=False
+    )
+
+    customer = relationship(
+        Customer,
+        back_populates='orders',
+        uselist=False
+    )
+
+    items = relationship(
+        'OrderItem',
+        back_populates='order',
+        uselist=True
+    )
+
+
+class OrderItem(Base, CRUD):
+    __tablename__ = 'orders_items'
+    id = Column(BigInteger, primary_key=True)
+    order_id = Column(ForeignKey(Order.id, ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    product_id = Column(ForeignKey(Product.id, ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    quantity = Column(Float(decimal_return_scale=3), nullable=False, default=0)
+
+    order = relationship(
+        Order,
+        back_populates='items',
+        uselist=False
+    )
+
+    product = relationship(
+        Product,
+        uselist=False
+    )
 
 
 def create_tables(engine: Engine):
