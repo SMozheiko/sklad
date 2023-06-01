@@ -26,7 +26,7 @@ class Manager(Base, CRUD):
 
     orders = relationship(
         'Order',
-        back_populates='customer',
+        back_populates='manager',
         uselist=True
     )
 
@@ -187,7 +187,7 @@ class Order(Base, CRUD):
     manager_id = Column(ForeignKey(Manager.id, onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     customer_id = Column(ForeignKey(Customer.id, onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now)
-    updated_at_at = Column(DateTime, nullable=True, default=datetime.datetime.now)
+    updated_at = Column(DateTime, nullable=True, default=datetime.datetime.now)
     cost = Column(Float(decimal_return_scale=2), nullable=False, default=0)
     nds = Column(Float(decimal_return_scale=2), nullable=False, default=settings.base_nds)
     total_cost = Column(Float(decimal_return_scale=2), nullable=False, default=0)
