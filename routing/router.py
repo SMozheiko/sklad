@@ -89,7 +89,7 @@ class Router:
 
         _method, tag = getattr(self, f'_{method}', {}).get(action, (None, None))
 
-        if _method:
+        if _method is not None:
             if _method.login_required and self.user is None:
                 return self.login(request)
         
@@ -103,5 +103,6 @@ class Router:
             return Response(tag=tag, html=result, header=self.get_header_html(request.action))
         return Response(
             tag='body', 
-            html='<h2>Извините, данныя функция пока недоступна либо что то пошло не так. Пожалуйста, обратитесь к разработчику</h2>'
+            html='<h2>Извините, данныя функция пока недоступна либо что то пошло не так. '
+                 'Пожалуйста, обратитесь к разработчику</h2>'
         )
