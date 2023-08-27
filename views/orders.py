@@ -7,3 +7,9 @@ class OrderCreateView(LoginRequiredMixin, BaseCreateView):
     model = Order
     template = 'create.html'
     template_path = 'orders'
+
+
+class OrderListView(LoginRequiredMixin, BaseListView):
+    model = Order
+    template_path = 'orders'
+    template = 'list.html'
