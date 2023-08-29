@@ -188,11 +188,14 @@ class Order(Base, CRUD):
     customer_id = Column(ForeignKey(Customer.id, onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now)
     updated_at = Column(DateTime, nullable=True, default=datetime.datetime.now)
-    cost = Column(Float(decimal_return_scale=2), nullable=False, default=0)
-    nds = Column(Float(decimal_return_scale=2), nullable=False, default=settings.base_nds)
-    total_cost = Column(Float(decimal_return_scale=2), nullable=False, default=0)
     payed = Column(Float(decimal_return_scale=2), nullable=False, default=0)
     delivery_date = Column(Date, nullable=False, default=datetime.datetime.today)
+
+    @property
+    def cost(self) -> float:
+        return sum(
+            [x.price * x.quantity for x in self.items]
+        )
 
     manager = relationship(
         Manager,
@@ -219,7 +222,7 @@ class OrderItem(Base, CRUD):
     order_id = Column(ForeignKey(Order.id, ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     product_id = Column(ForeignKey(Product.id, ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     quantity = Column(Float(decimal_return_scale=3), nullable=False, default=0)
-
+    price = Column(Float(decimal_return_scale=3), nullable=False, default=0)
     order = relationship(
         Order,
         back_populates='items',

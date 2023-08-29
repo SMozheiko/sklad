@@ -1,0 +1,47 @@
+<div class="form-content">
+  <h2 id="form-title">Новая накладная</h2>
+  <form action="#" method="post">
+    {% for error in errors %}
+      <p class="error"> {{ error }}</p>
+    {% endfor %}
+      <div class="field-container">
+        <label for="customer">Клиент</label>
+        <input name="customer" id="customer" data-action="customers" type="text" onfocusin="focusIn(this)"
+        oninput="customerOnInput(this)">
+          <div class="tooltip" style="display: none;">
+          </div>
+      </div>
+      <h3>Список позиций</h3>
+      <div class="order-item">
+          <div class="field-container">
+              <input type="text" name="title" id="title-1" data-action="products"
+                 onfocusin="focusIn(this)"
+                 oninput="productsOnInput(this)"
+              >
+              <div class="tooltip" style="display: none;">
+              </div>
+              <input type="hidden" name="id">
+              <input type="number" name="price" id="price-1" min="0.0" value="0.0">
+              <input type="number" name="quantity" id="quantity-1" min="0.0" value="0.0">
+          </div>
+      </div>
+      <div style="display: none;" class="order-item">
+          <div class="field-container">
+              <input type="text" name="title" id="title-2" data-action="products"
+                 onfocusin="focusIn(this)"
+                 oninput="productsOnInput(this)"
+              >
+              <div class="tooltip" style="display: none;">
+              </div>
+              <input type="hidden" name="id">
+              <input type="number" name="price" id="price-2" min="0.0" value="0.0">
+              <input type="number" name="quantity" id="quantity-2" min="0.0" value="0.0">
+          </div>
+      </div>
+      <button type="button" onclick="addOrderItem(this)">Добавить +</button>
+  </form>
+  <div class="controls">
+    <button class="control-button ok-button" data-action="create_order">Ok</button>
+    <button class="control-button cancel-button" data-action="cancel">Отмена</button>
+  </div>
+</div>

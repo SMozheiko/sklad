@@ -1,0 +1,62 @@
+<div class="content">
+    <div class="buttons">
+        <button class="operational-button margin-left-10" data-action="create_order">
+            Новый заказ +
+        </button>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="aggregate-container">
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="search aggregate">
+        <label for="search"><span>Поиск: </span></label>
+        <input type="text" name="search" id="search" data-action="orders_list" value="{{ search }}">
+        <button class="search-button" data-drop="" onclick="searchOrders(this)">Найти</button>
+        <button class="search-button" data-drop="1" onclick="searchOrders(this)">Показать все</button>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="pagination">
+    </div>
+    <br>
+    <table class="table">
+        <tr>
+            <th>Клиент</th>
+            <th>Общая сумма</th>
+            <th>Дата создания</th>
+            <th>Дата последней оплаты</th>
+            <th>Оплачено, руб</th>
+            <th>Неоплачено, руб</th>
+        </tr>
+        {% for object in objects %}
+        <tr>
+            <td>{{ object.customer.title }}</td>
+            <td>{{ object.cost }}</td>
+            <td>{{ object.created_at }}</td>
+            <td>{{ object.updated_at }}</td>
+            <td>{{ object.payed }}</td>
+            <td>{{ object.cost - object.payed }}</td>
+            <td>
+                <button class="operational-button" data-action="detail_order" data-id="{{ object.id }}">
+                    Подробно
+                </button>
+            </td>
+            <td>
+                <button class="operational-button" data-action="update_order" data-id="{{ object.id }}">
+                    Изменить
+                </button>
+            </td>
+            <td>
+                <button class="operational-button" data-action="delete_order" data-id="{{ object.id }}">
+                    Удалить
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

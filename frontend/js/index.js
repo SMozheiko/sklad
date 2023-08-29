@@ -77,6 +77,9 @@ async function formControlListner(event) {
             frame.classList.remove('visible-frame');
         } else if (event.target.dataset.action === 'exit') {
             window.close();
+        } else if (event.target.dataset.action === 'create_order') {
+            let orderData = collectData(event.target);
+            await eel.route(event.target.dataset.action, 'post', {}, orderData)();
         } else {
             const params = {}
             for (let key in event.target.dataset) {
